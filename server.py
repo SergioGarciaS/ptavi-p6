@@ -1,8 +1,6 @@
 #!/usr/bin/python3
 # -*- coding: utf-8 -*-
-"""
-Clase (y programa principal) para un servidor de eco en UDP simple
-"""
+"""Clase (y programa principal) para un servidor de eco en UDP simple."""
 
 import socketserver
 import sys
@@ -10,12 +8,10 @@ import os
 
 
 class EchoHandler(socketserver.DatagramRequestHandler):
-    """
-    Echo server class
-    """
-    def handle(self):
-        # Escribe dirección y puerto del cliente (de tupla client_address)
+    """Echo server class."""
 
+    def handle(self):
+        """Programa principal."""
         Methods = ['INVITE', 'BYE', 'ACK']
         IP_Client = str(self.client_address[0])
         while 1:
