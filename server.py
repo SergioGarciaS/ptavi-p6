@@ -23,29 +23,32 @@ class EchoHandler(socketserver.DatagramRequestHandler):
             line = self.rfile.read()
             if not line:
                 break
+            probar = line.decode('utf-8').split(' ')
+            Protocol_Check = probar[1].split(':')[0]
+            Method_Check = line.decode('utf-8').split(' ')[0]
+            Final_Check = probar[2]
 
             print("El cliente nos manda " + line.decode('utf-8'))
-            probar = line.decode('utf-8').split(' ')
+
             if line.decode('utf-8').split(' ')[0] not in Methods:
                 Answer = ('SIP/2.0 405 Method Not allowed' + '\r\n\r\n')
                 self.wfile.write(bytes(Answer, 'utf-8'))
 
-            elif probar[2] != 'SIP/2.0\r\n\r\n' or \
-                                probar[1].split(':')[0] != 'sip':
+            elif Final_Check != 'SIP/2.0\r\n\r\n' or Protocol_Check != 'sip':
                 Answer = ('SIP/2.0 400 Bad Request' + '\r\n\r\n')
                 self.wfile.write(bytes(Answer, 'utf-8'))
 
-            elif line.decode('utf-8').split(' ')[0] == 'INVITE':
+            elif Method_Check == 'INVITE':
                 Answer = ('SIP/2.0 100 Trying' + '\r\n\r\n' +
                           'SIP/2.0 180 Ringing' + '\r\n\r\n' +
                           'SIP/2.0 200 OK' + '\r\n\r\n')
                 self.wfile.write(bytes(Answer, 'utf-8'))
 
-            elif line.decode('utf-8').split(' ')[0] == 'BYE':
+            elif Method_Check == 'BYE':
                 Answer = ('SIP/2.0 200 OK' + '\r\n\r\n')
                 self.wfile.write(bytes(Answer, 'utf-8'))
 
-            elif line.decode('utf-8').split(' ')[0] == 'ACK':
+            elif Method_Check == 'ACK':
                 toRun = ('mp32rtp -i ' + IP_Client + ' -p 23032 < ' + FILE)
                 print("Vamos a ejecutar", toRun)
                 os.system(toRun)
