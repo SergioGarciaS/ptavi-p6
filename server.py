@@ -26,7 +26,17 @@ class EchoHandler(socketserver.DatagramRequestHandler):
                 break
             
             print("El cliente nos manda " + line.decode('utf-8'))
-            if line.decode('utf-8').split(' ')[0] == 'INVITE':
+            probar = line.decode('utf-8').split(' ')
+            print(probar)
+            if line.decode('utf-8').split(' ')[0] not in Methods:
+                Answer = ('SIP/2.0 405 Method Not allowed' + '\r\n\r\n')
+                self.wfile.write(bytes(Answer, 'utf-8'))
+                
+            elif probar[2]!='SIP/2.0\r\n\r\n' or probar[1].split(':')[0] != 'sip':
+                Answer = ('SIP/2.0 400 Bad Request' + '\r\n\r\n')
+                self.wfile.write(bytes(Answer, 'utf-8'))
+                
+            elif line.decode('utf-8').split(' ')[0] == 'INVITE':
                 Answer = ('SIP/2.0 100 Trying' + '\r\n\r\n' +
                           'SIP/2.0 180 Ringing' + '\r\n\r\n' +
                           'SIP/2.0 200 OK' + '\r\n\r\n')
@@ -38,16 +48,11 @@ class EchoHandler(socketserver.DatagramRequestHandler):
                 toRun = ('mp32rtp -i ' + IP_Client + ' -p 23032 < ' + FILE)
                 print("Vamos a ejecutar", toRun)
                 os.system(toRun)
-                print("*===================*\n",
-                      "The file is send...\n",
-                      "*===================*\n")
-                
-            elif line.decode('utf-8').split(' ')[0] not in Methods:
-                Answer = ('SIP/2.0 400 Bad Request' + '\r\n\r\n')
-                self.wfile.write(bytes(Answer, 'utf-8'))
-            else:
-                Answer = ('SIP/2.0 405 Method Not allowed' + '\r\n\r\n')
-                self.wfile.write(bytes(Answer, 'utf-8'))
+                print(" *=====================*\n",
+                      " |The file is send...|\n",
+                      "*=====================*\n")
+               
+
             
 
 
